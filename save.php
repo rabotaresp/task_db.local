@@ -1,19 +1,10 @@
 <?php
 if ($_GET) {
-    if (isset($_GET['inm'])) {
-        $fw = fopen("save.txt", 'r');
-        $count_read_line =0;
-        $line = [];
-        while ($read_line = fgets($fw)) {
-            $line[]=trim($read_line);
-        }
-        fclose($fw);
-        $line[$_GET['inm']] = $_GET['task'].'|'.$_GET['deadline'];
-        $fw = fopen("save.txt", 'w');
-        foreach ($line as $value) {
-            fwrite($fw, $value.PHP_EOL);
-        }
-        fclose($fw);
+    if (isset($_GET['task_m'])&& isset($_GET['task']) && isset($_GET['deadline_m'])&& isset($_GET['deadline'])) {
+        $db = mysqli_connect('localhost', 'root', '', 'tasksdb');
+        $myquery = "update tasksdb.tasks set Task = '".$_GET['task_m']."', Deadline ='".$_GET['deadline_m']."' where Task = '".$_GET['task']."' and Deadline ='".$_GET['deadline']."'";
+        $res = mysqli_query($db, $myquery);
+        mysqli_close($db);
     }
 }
 header('location: index.php');

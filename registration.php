@@ -1,22 +1,29 @@
 <?php
 session_start();
-$db = mysqli_connect('localhost', 'root', '', 'tasksDB');
-$myquery = "delete  from users where id =1";
-$res = mysqli_query($db, $myquery);
+
 if($_POST){
-    if(isset($_POST['name']) && isset($_POST['login']) && isset($_POST['pass'])){
+    if(isset($_POST['name']) && isset($_POST['login_user']) && isset($_POST['pass'])){
         $name = $_POST['name'];
-        $login = $_POST['login'];
+        $login = $_POST['login_user'];
         $password = $_POST['pass'];
-        $_SESSION['login'] = $login;
-        $db = mysqli_connect('localhost', 'root', '', 'tasksDB');
-//        $myquery = "insert into users(Name, Login, Password) value ('".$name."', '".$login."','".$password."')";
-        $res = mysqli_query($db, $myquery);
+        $db = mysqli_connect('localhost', 'root', '', 'tasksdb');
+        $result = mysqli_query($db,'SELECT Login FROM users WHERE login = "' . $login . '"');
+        if ( mysqli_num_rows($result) > 0) {
+            $error = 'Your login is busy, change login.';
+            mysqli_close($db);
+            exit();
+        }
+        else {
+            $myquery = "insert into users (Name, Login, Password) value ('" . $name . "', '" . $login . "','" . $password . "')";
+            $res = mysqli_query($db, $myquery);
+            $_SESSION['id'] = mysqli_insert_id($db);
+            $_SESSION['login'] = $login;
+        }
         if(mysqli_errno($db)== 0)
         {
             $error = 'Success login';
+            mysqli_close($db);
             header('location: index.php');
-
         }
     }
 }
@@ -31,7 +38,7 @@ if($_POST){
         <label class="regform">* enter your name</label>
         <input type="text" name="name" class="regform">
         <label class="regform" >* enter your login</label>
-        <input type="text" name="login" class="regform">
+        <input type="text" name="login_user" class="regform">
         <label class="regform">* enter password</label>
         <input type="text" name="pass" class="regform">
         <button type="submit" id="registr" class="regform">Registration</button>

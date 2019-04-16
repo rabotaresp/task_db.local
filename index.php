@@ -1,15 +1,16 @@
 <?php
+//to connect DB "jdbc:mysql://[хост]:[порт]/[бд]?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
 $t_index = 0;
 $m_index= 0;
-
 session_start();
-var_dump($_SESSION['login']);
-if(isset($_SESSION['login']) && $_SESSION['login'] = $_POST['login']){
-    header('location: registration.php');
+if(!isset($_SESSION['login'])){
+    header('location: login.php');
 }
-session_destroy();
-session_abort();
+$db = mysqli_connect('localhost', 'root', '', 'tasksdb');
+$myquery = "select task, deadline from tasksdb.tasks where Id_Users = '".$_SESSION['id']."'";
+$res = mysqli_query($db, $myquery);
 ?>
+
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
@@ -20,10 +21,16 @@ session_abort();
     <title>TaskTabl</title>
 </head>
 <body>
+<div class="lableText">
+    <label>Hi, <?=$_SESSION['login'] ?></label>
+    <form action="login.php" method="post">
+        <button type="submit">Log out</button>
+    </form>
+</div>
 <div class="table">
-    <form action="add.php" method="get">
+    <form action="add.php" method="post">
         <input id="task_add" type="text" name="task" required>
-        <input id="deadline_add" type="text" name="deadline" required>
+        <input id="deadline_add" type="date" name="deadline" value="<?=date('Y:m:d\Tm:i', time())?>" required>
         <button type="submit" id="btn_add">Add</button>
     </form>
 </div>
@@ -38,20 +45,15 @@ session_abort();
     </thead>
     <tbody>
     <?
-    $r_line = file("save.txt");
-    $line = [];
-    foreach ($r_line as $value) {
-        $line[] = explode('|', $value);
-    }
-    foreach ($line as $value) {
+    while($row = mysqli_fetch_assoc($res)){
         ?>
         <tr>
-            <td><?= $value[0] ?></td>
-            <td><?= $value[1] ?></td>
-            <td><a href="delete.php?ind=<?= $t_index++ ?>"> Done</a></td>
-            <td><a href="modify.php?inm=<?= $m_index++ ?>"> Modify</a></td>
+            <td><?= $row['task'] ?></td>
+            <td><?= $row['deadline'] ?></td>
+            <td><a href="delete.php?ind=<?= $row['task'].'|'.$row['deadline']?>"> Done</a></td>
+            <td><a href="modify.php?inm=<?= $row['task'].'|'.$row['deadline']?>"> Modify</a></td>
         </tr>
-    <? } ?>
+    <? }mysqli_close($db); ?>
 
     </tbody>
 </table>

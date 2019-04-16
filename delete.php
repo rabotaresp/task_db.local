@@ -1,23 +1,13 @@
 <?php
-if ($_GET) {
-    if (isset($_GET['ind'])) {
-        $fw = fopen("save.txt", 'r');
-        $count_del_ind = 0;
-        $line = [];
-        while ($read_line = fgets($fw)) {
-            if ($count_del_ind != $_GET['ind']) {
-                    $line[] = $read_line;
-            }
-            $count_del_ind++;
-        }
-        fclose($fw);
-        $fw = fopen("save.txt", 'w');
-        foreach ($line as $value) {
-            if ($value != null) {
-                fwrite($fw, $value);
-            }
-        }
-        fclose($fw);
+session_start();
+if($_GET){
+        if (isset($_GET['ind'])) {
+            $index_delete = $_GET['ind'];
+            $lines = explode('|', $index_delete);
+            $db = mysqli_connect('localhost', 'root', '', 'tasksdb');
+            $myquery = "delete from tasksdb.tasks where Task = '".$lines[0]."' and Deadline ='".$lines[1]."' and Id_Users = '".$_SESSION['id']."'";
+            $res = mysqli_query($db, $myquery);
+            mysqli_close($db);
     }
 }
 header('location: index.php');

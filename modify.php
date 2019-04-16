@@ -1,21 +1,18 @@
 <?php
 if ($_GET) {
     if (isset($_GET['inm'])) {
-        $fw = fopen("save.txt", 'r');
-        for ($i = 0; $i < $_GET['inm']; $i++) {
-            fgets($fw);
-        }
-        $m_line = fgets($fw);
-        $lines = explode('|', $m_line);
+        $index_modify = $_GET['inm'];
+        $lines = explode('|', $index_modify);
+        $lines_m = explode('|', $index_modify);
     }
-
 }
 ?>
 <div class="table">
     <form action="save.php" method="get">
-        <input type="hidden" name="inm" value="<?= $_GET['inm'] ?>">
-        <input type="text" name="task" value="<?= $lines[0] ?>">
-        <input type="text" name="deadline" value="<?= $lines[1] ?>">
+        <input type="text" name="task_m" value="<?= $lines_m[0] ?>">
+        <input hidden type="text" name="task" value="<?= $lines[0] ?>">
+        <input type="text" name="deadline_m" value="<?= $lines_m[1]  ?>">
+        <input hidden type="text" name="deadline" value="<?= $lines[1] ?>">
         <button type="submit">Save</button>
     </form>
 </div>
