@@ -1,12 +1,16 @@
 <?php
+session_start();
+$db = mysqli_connect('localhost', 'root', '', 'tasksDB');
+$myquery = "delete  from users where id =1";
+$res = mysqli_query($db, $myquery);
 if($_POST){
     if(isset($_POST['name']) && isset($_POST['login']) && isset($_POST['pass'])){
         $name = $_POST['name'];
         $login = $_POST['login'];
         $password = $_POST['pass'];
         $_SESSION['login'] = $login;
-        $db = mysqli_connect('localhost', 'root', '', 'tasks');
-        $myquery = "insert into users(Name, Login, Password) value ('".$name."', '".$login."','".$password."')";
+        $db = mysqli_connect('localhost', 'root', '', 'tasksDB');
+//        $myquery = "insert into users(Name, Login, Password) value ('".$name."', '".$login."','".$password."')";
         $res = mysqli_query($db, $myquery);
         if(mysqli_errno($db)== 0)
         {
